@@ -15,45 +15,39 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
-
 export default {
   name: 'Page5',
-  setup() {
-    const store = useStore()
-    const pageData = ref(null)
-    const completed = ref(false)
-    const pageTitle = ref('Page 5')
-
-    const loading = computed(() => store.getters.isLoading)
-    const submitting = computed(() => store.getters.isSubmitting)
-
-    onMounted(async () => {
-      const data = await store.dispatch('initializePage', 'page5')
-      if (data) {
-        pageData.value = data
-        pageTitle.value = data.title
-      }
-    })
-
-    const handleContinue = async () => {
-      const response = await store.dispatch('handleContinue', {
+  data() {
+    return {
+      pageData: null,
+      completed: false,
+      pageTitle: 'Page 5'
+    }
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.isLoading
+    },
+    submitting() {
+      return this.$store.getters.isSubmitting
+    }
+  },
+  async mounted() {
+    const data = await this.$store.dispatch('initializePage', 'page5')
+    if (data) {
+      this.pageData = data
+      this.pageTitle = data.title
+    }
+  },
+  methods: {
+    async handleContinue() {
+      const response = await this.$store.dispatch('handleContinue', {
         pageName: 'page5',
-        pageData: pageData.value
+        pageData: this.pageData
       })
       if (response && response.success) {
-        completed.value = true
+        this.completed = true
       }
-    }
-
-    return {
-      pageData,
-      loading,
-      submitting,
-      completed,
-      pageTitle,
-      handleContinue
     }
   }
 }

@@ -14,40 +14,35 @@
 </template>
 
 <script>
-import { ref, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
-
 export default {
   name: 'Page2',
-  setup() {
-    const store = useStore()
-    const pageData = ref(null)
-    const pageTitle = ref('Page 2')
-
-    const loading = computed(() => store.getters.isLoading)
-    const submitting = computed(() => store.getters.isSubmitting)
-
-    onMounted(async () => {
-      const data = await store.dispatch('initializePage', 'page2')
-      if (data) {
-        pageData.value = data
-        pageTitle.value = data.title
-      }
-    })
-
-    const handleContinue = async () => {
-      await store.dispatch('handleContinue', {
-        pageName: 'page2',
-        pageData: pageData.value
-      })
-    }
-
+  data() {
     return {
-      pageData,
-      loading,
-      submitting,
-      pageTitle,
-      handleContinue
+      pageData: null,
+      pageTitle: 'Page 2'
+    }
+  },
+  computed: {
+    loading() {
+      return this.$store.getters.isLoading
+    },
+    submitting() {
+      return this.$store.getters.isSubmitting
+    }
+  },
+  async mounted() {
+    const data = await this.$store.dispatch('initializePage', 'page2')
+    if (data) {
+      this.pageData = data
+      this.pageTitle = data.title
+    }
+  },
+  methods: {
+    async handleContinue() {
+      await this.$store.dispatch('handleContinue', {
+        pageName: 'page2',
+        pageData: this.pageData
+      })
     }
   }
 }
